@@ -1,0 +1,35 @@
+type User {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  email: String!
+  createdAt: String!
+}
+
+input UserCreate {
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String!
+}
+
+input UserLogin {
+  email: String!
+  password: String!
+}
+
+type Auth {
+  token: String!
+  role: String!
+}
+
+type Query {
+  getUsers: [User]
+  getUserByEmail(email: String!): User!
+  getUserById(id: ID): User!
+  authorizeUser(email: String!, password: String!): Auth!
+}
+
+type Mutation {
+  createUser(user: UserCreate): User!
+}

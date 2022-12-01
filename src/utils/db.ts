@@ -1,13 +1,13 @@
 import { open } from "sqlite";
 import sqlite from "sqlite3";
-import { UserInput } from "../models.js";
+import { User  } from "../../src/models/user.model";
 import { v4 } from "uuid";
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { getFirestore, collection, getDocs, Firestore } from "firebase/firestore";
 import dotenv from "dotenv";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
-const _ = dotenv.config();
+dotenv.config();
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -31,73 +31,54 @@ const usersFromCollection = await getDocs(userCollection);
 
 export const allUsers = usersFromCollection.docs.map((doc) => doc.data());
 
-export const db = await open({
-  filename: "db.sqlite",
-  driver: sqlite.Database,
-});
+// export const db = await open({
+//   filename: "db.sqlite",
+//   driver: sqlite.Database,
+// });
 
-const userQueries = {
-  getAll: `SELECT * FROM USERS;`,
-  getById: (id: string) => `SELECT * FROM USERS WHERE id = '${id}';`,
-  getByEmail: (email: string) =>
-    `SELECT * FROM USERS WHERE email = '${email}';`,
-  insert: (user: UserInput, id: string) => `INSERT INTO USERS VALUES
-  ("${id}", "${user.firstName}", "${user.lastName}", "${user.email}");`,
-};
-
-const userByIdQuery = (id: string) => `
-SELECT * FROM USERS WHERE id = "${id}";
-`;
-
-const userByEmailQuery = (email: string) => `
-SELECT * FROM USERS WHERE email = '${email}';
-`;
-
-const userInsert = (user: UserInput, id: string) => `
-INSERT INTO USERS VALUES
-("${id}", "${user.firstName}", "${user.lastName}", "${user.email}") 
-`;
-
-// export const getUsers = db.all<UserInput & { id: string }>(userQueries.getAll);
-// export const insertUser = async (user: UserInput) => {
-//   const id = v4();
-//   console.log(userInsert(user, id));
-//   await db.exec(userInsert(user, id));
-
-//   return await db.get<UserInput & { id: string }>(userByIdQuery(id));
+// const userQueries = {
+//   getAll: `SELECT * FROM USERS;`,
+//   getById: (id: string) => `SELECT * FROM USERS WHERE id = '${id}';`,
+//   getByEmail: (email: string) =>
+//     `SELECT * FROM USERS WHERE email = '${email}';`,
+//   insert: (user: UserInput, id: string) => `INSERT INTO USERS VALUES
+//   ("${id}", "${user.firstName}", "${user.lastName}", "${user.email}");`,
 // };
 
-// export const checkIfUserExist = async (email: string) => {
-//   const user = await db.all(userByEmailQuery(email));
+// export const UserRepository = {
+//   getAll: async () => db.all<UserInput & { id: string }>(userQueries.getAll),
+//   getById: async (id: string) =>
+//     await db.get<UserInput & { id: string }>(userQueries.getById(id)),
+//   getByEmail: async (email: string) =>
+//     await db.get<UserInput & { id: string }>(userQueries.getByEmail(email)),
+//   exist: async (email: string) => {
+//     const user = await db.all(userQueries.getByEmail(email));
 
-//   if (user.length > 0) return true;
+//     if (user.length > 0) return true;
 
-//   return false;
+//     return false;
+//   },
+//   insert: async (user: UserInput) => {
+//     const id = v4();
+//     await db.exec(userQueries.insert(user, id));
+
+//     return await db.get<UserInput & { id: string }>(userQueries.getById(id));
+//   },
 // };
 
-// export const getUserByEmail = async (email: string) =>
-//   await db.get<UserInput & { id: string }>(userByEmailQuery(email));
 
-// export const getUserById = async (id: string) =>
-//   await db.get<UserInput & { id: string }>(userQueries.getById(id));
+export abstract class Repository<T> {
+  constructor(private readonly db: Firestore) {}
 
-export const User = {
-  getAll: async () => db.all<UserInput & { id: string }>(userQueries.getAll),
-  getById: async (id: string) =>
-    await db.get<UserInput & { id: string }>(userQueries.getById(id)),
-  getByEmail: async (email: string) =>
-    await db.get<UserInput & { id: string }>(userByEmailQuery(email)),
-  exist: async (email: string) => {
-    const user = await db.all(userByEmailQuery(email));
+  public declare async getById(id: string): Promise<T>;
+}
 
-    if (user.length > 0) return true;
-
-    return false;
-  },
-  insert: async (user: UserInput) => {
-    const id = v4();
-    await db.exec(userQueries.insert(user, id));
-
-    return await db.get<UserInput & { id: string }>(userByIdQuery(id));
-  },
-};
+export class UserRepository extends Repository<User>{
+  private readonly userCollection: 
+  constructor(db: Firestore) {
+    super(db);
+  }
+  public static async getById(id: string) {
+    await this.db.
+  } 
+} 
