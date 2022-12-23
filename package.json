@@ -16,7 +16,7 @@
     "firebase": "^9.14.0",
     "graphql": "^16.6.0",
     "jest": "^29.3.1",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "nodemon": "^2.0.20",
     "sqlite": "^4.1.2",
     "sqlite3": "^5.1.2",
